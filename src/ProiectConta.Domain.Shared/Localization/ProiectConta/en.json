@@ -6,10 +6,19 @@
     "Welcome": "Welcome",
     "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io.",
     "Products": "Products",
+    "Partners": "Partners",
+    "Gestions": "Gestions",
     "AddProduct": "Add Product",
+    "AddPartner": "Add Partner",
+    "AddGestions": "Add Gestions",
     "ProiectConta:00001": "There is already a product with the same name: {name}.",
+    "ProiectConta:00002": "There is already a partner with the same name: {name}.",
+    "ProiectConta:00003": "There is already a gestion with the same name: {name}.",
     "Menu:Products": "Products",
+    "Menu:Gestions": "Gestions",
+    "Menu:Partners": "Partners",
     "ProductDeletionConfirmationMessage": "Are you sure to delete the product '{0}'?",
+    "PartnerDeletionConfirmationMessage": "Are you sure to delete the partner '{0}'?",
     "Menu:ProiectConta": "Proiect Contabilitate"
 
   }

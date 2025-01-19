@@ -47,13 +47,6 @@ public class ProiectContaMenuContributor : IMenuContributor
         administration.SetSubItemOrder(IdentityMenuNames.GroupName, 2);
         administration.SetSubItemOrder(SettingManagementMenus.GroupName, 3);
 
-        //var productMenu = new ApplicationMenuItem(
-        //    "Products",
-        //    l["Menu:Products"],
-        //    icon: "fas fa-book"
-        //);
-        //context.Menu.AddItem(productMenu);
-
         context.Menu.AddItem(
             new ApplicationMenuItem(
                 "ProiectConta",
@@ -64,6 +57,18 @@ public class ProiectContaMenuContributor : IMenuContributor
                     "ProiectConta.Products",
                     l["Menu:Products"],
                     url: "/products"
+                )
+            ).AddItem(
+                new ApplicationMenuItem(
+                    "ProiectConta.Partners",
+                    l["Menu:Partners"],
+                    url: "/partners"
+                )
+            ).AddItem(
+                new ApplicationMenuItem(
+                    "ProiectConta.Gestions",
+                    l["Menu:Gestions"],
+                    url: "/gestions"
                 )
             )
         );

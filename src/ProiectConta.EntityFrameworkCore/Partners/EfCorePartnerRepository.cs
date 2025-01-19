@@ -16,12 +16,36 @@ namespace ProiectConta.Partners
         {
         }
 
+        public async Task<Partner> FindByNameAsync(string name)
+        {
+            var dbSet = await GetDbSetAsync();
+            return await dbSet.FirstOrDefaultAsync(partner => partner.Name == name);
+        }
+
         public async Task<List<Partner>> GetPartnersByTypeAsync(PartnerType type)
         {
-            var dbContext = await GetDbContextAsync();
-            return await dbContext.Partners
-                .Where(p => p.Type == type)
+            var dbSet = await GetDbSetAsync();
+            return await dbSet.Where(partner => partner.Type == type).ToListAsync();
+        }
+
+        public async Task<List<Partner>> GetListAsync(
+            int skipCount, 
+            int maxResultCount, 
+            string sorting, 
+            string filter = null)
+        {
+            var dbSet = await GetDbSetAsync();
+            return await dbSet
+                .WhereIf(
+                    !filter.IsNullOrWhiteSpace(),
+                    partner => partner.Name.Contains(filter)
+                )
+                //.OrderBy(sorting)
+                .Skip(skipCount)
+                .Take(maxResultCount)
                 .ToListAsync();
         }
+
+
     }
 }

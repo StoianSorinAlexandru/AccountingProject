@@ -1,0 +1,99 @@
+﻿@page "/partners"
+@using ProiectConta.Partners
+@using ProiectConta.Localization
+@using Volo.Abp.AspNetCore.Components.Web
+@inherits ProiectContaComponentBase
+@inject IPartnerAppService PartnerAppService
+@inject AbpBlazorMessageLocalizerHelper<ProiectContaResource> LH
+
+<Card>
+	<CardHeader>
+		<Row Class="justify-content-between">
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<h2>@L["Partners"]</h2>
+			</Column>
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<Button Color="Color.Primary" Clicked="OpenCreatePartnerModal">
+					@L["AddPartner"]
+				</Button>
+			</Column>
+		</Row>
+	</CardHeader>
+
+	<CardBody>
+		<DataGrid TItem="PartnerDto"
+				  Data="PartnerList"
+				  TotalItems="TotalCount"
+				  ShowPager="true"
+				  PageSize="PageSize">
+			<DataGridColumns>
+				<DataGridColumn TItem="PartnerDto" Field="@nameof(PartnerDto.Name)" Caption="@L["Name"]" />
+				<DataGridColumn TItem="PartnerDto" Field="@nameof(PartnerDto.CUI)" Caption="@L["CUI"]" />
+				<DataGridColumn TItem="PartnerDto" Field="@nameof(PartnerDto.Address)" Caption="@L["Address"]" />
+				<DataGridColumn TItem="PartnerDto" Caption="@L["Actions"]">
+					<Button Color="Color.Primary" OnClick="EditPartnerAsync">Edit</Button> |
+					<Button Color="Color.Danger" OnClick="DeletePartnerAsync">Delete</Button>
+				</DataGridColumn>
+			</DataGridColumns>
+		</DataGrid>
+
+	</CardBody>
+</Card>
+
+<Modal @ref="CreatePartnerModal"> 
+	<ModalContent IsCentered="true">
+		<Form>
+			<ModalHeader>
+				<ModalTitle>@L["AddPartner"]</ModalTitle>
+				<CloseButton OnClick="CloseCreatePartnerModal" />
+			</ModalHeader>
+			<ModalBody>
+				<Field>
+					<FieldLabel>@L["Name"]</FieldLabel>
+					<TextEdit @bind-Value="@NewPartner.Name" />
+				</Field>
+				<Field>
+					<FieldLabel>@L["CUI"]</FieldLabel>
+					<TextEdit @bind-Value="@NewPartner.CUI" />
+				</Field>
+				<Field>
+					<FieldLabel>@L["Address"]</FieldLabel>
+					<TextEdit @bind-Value="@NewPartner.Address" />
+				</Field>
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="CreatePartnerAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseCreatePartnerModal">@L["Cancel"]</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
+
+<Modal @ref="EditPartnerModal">
+	<ModalContent IsCentered="true">
+		<Form>
+			<ModalHeader>
+				<ModalTitle>@EditingPartner.Name</ModalTitle>
+				<CloseButton OnClick="CloseEditPartnerModal" />
+			</ModalHeader>
+			<ModalBody>
+				<Field>
+					<FieldLabel>@L["Name"]</FieldLabel>
+					<TextEdit @bind-Value="@EditingPartner.Name" />
+				</Field>
+				<Field>
+					<FieldLabel>@L["CUI"]</FieldLabel>
+					<TextEdit @bind-Value="@EditingPartner.CUI" />
+				</Field>
+				<Field>
+					<FieldLabel>@L["Address"]</FieldLabel>
+					<TextEdit @bind-Value="@EditingPartner.Address" />
+				</Field>
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="UpdatePartnerAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseEditPartnerModal">@L["Cancel"]</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
