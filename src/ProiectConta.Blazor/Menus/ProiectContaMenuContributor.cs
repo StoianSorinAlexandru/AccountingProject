@@ -34,6 +34,7 @@ public class ProiectContaMenuContributor : IMenuContributor
             )
         );
 
+
         if (MultiTenancyConsts.IsEnabled)
         {
             administration.SetSubItemOrder(TenantManagementMenuNames.GroupName, 1);
@@ -45,6 +46,27 @@ public class ProiectContaMenuContributor : IMenuContributor
 
         administration.SetSubItemOrder(IdentityMenuNames.GroupName, 2);
         administration.SetSubItemOrder(SettingManagementMenus.GroupName, 3);
+
+        //var productMenu = new ApplicationMenuItem(
+        //    "Products",
+        //    l["Menu:Products"],
+        //    icon: "fas fa-book"
+        //);
+        //context.Menu.AddItem(productMenu);
+
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                "ProiectConta",
+                l["Menu:ProiectConta"],
+                icon: "fa fa-book"
+            ).AddItem(
+                new ApplicationMenuItem(
+                    "ProiectConta.Products",
+                    l["Menu:Products"],
+                    url: "/products"
+                )
+            )
+        );
 
         return Task.CompletedTask;
     }

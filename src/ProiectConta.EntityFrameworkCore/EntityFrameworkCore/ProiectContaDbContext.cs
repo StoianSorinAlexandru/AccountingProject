@@ -107,6 +107,7 @@ public class ProiectContaDbContext :
                 ProiectContaConsts.DbSchema);
             b.ConfigureByConvention();
             b.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            b.HasIndex(x => x.Name);
         });
 
         builder.Entity<Partner>(

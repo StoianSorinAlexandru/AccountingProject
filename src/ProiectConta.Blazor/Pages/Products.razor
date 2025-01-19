@@ -1,0 +1,90 @@
+﻿@page "/products"
+@using ProiectConta.Products
+@using ProiectConta.Localization
+@using Volo.Abp.AspNetCore.Components.Web
+@inherits ProiectContaComponentBase
+@inject IProductAppService ProductAppService
+@inject AbpBlazorMessageLocalizerHelper<ProiectContaResource> LH
+
+<Card>
+	<CardHeader>
+		<Row Class="justify-content-between">
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<h2>@L["Products"]</h2>
+			</Column>
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<Button Color="Color.Primary" Clicked="OpenCreateProductModal">
+					@L["AddProduct"]
+				</Button>
+			</Column>
+		</Row>
+	</CardHeader>
+
+	<CardBody>
+		<DataGrid TItem="ProductDto"
+				  Data="ProductList"
+				  TotalItems="TotalCount"
+				  ShowPager="true"
+				  PageSize="PageSize">
+			<DataGridColumns>
+				<DataGridColumn TItem="ProductDto" Field="@nameof(ProductDto.Name)" Caption="@L["Name"]" />
+				<DataGridColumn TItem="ProductDto" Field="@nameof(ProductDto.Price)" Caption="@L["Price"]" />
+				<DataGridColumn TItem="ProductDto" Caption="@L["Actions"]">
+					<Button Color="Color.Primary" OnClick="EditProductAsync">Edit</Button> |
+					<Button Color="Color.Danger" OnClick="DeleteProductAsync">Delete</Button>
+				</DataGridColumn>
+			</DataGridColumns>
+		</DataGrid>
+	</CardBody>
+</Card>
+
+<Modal @ref="CreateProductModal"> 
+	<ModalContent IsCentered="true">
+		<Form>
+			<ModalHeader>
+				<ModalTitle>@L["AddProduct"]</ModalTitle>
+				<CloseButton OnClick="CloseCreateProductModal" />
+			</ModalHeader>
+			<ModalBody>
+				<Field>
+					<FieldLabel>@L["Name"]</FieldLabel>
+					<TextEdit @bind-Value="@NewProduct.Name" />
+				</Field>
+				<Field>
+					<FieldLabel>@L["Price"]</FieldLabel>
+					<TextEdit @bind-Value="@NewProduct.Price" />
+				</Field>
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="CreateProductAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseCreateProductModal">@L["Cancel"]</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
+
+
+<Modal @ref="EditProductModal">
+	<ModalContent IsCentered="true">
+		<Form>
+			<ModalHeader>
+				<ModalTitle>@EditingProduct.Name</ModalTitle>
+				<CloseButton OnClick="CloseEditProductModal" />
+			</ModalHeader>
+			<ModalBody>
+				<Field>
+					<FieldLabel>@L["Name"]</FieldLabel>
+					<TextEdit @bind-Value="@EditingProduct.Name" />
+				</Field>
+				<Field>
+					<FieldLabel>@L["Price"]</FieldLabel>
+					<TextEdit @bind-Value="@EditingProduct.Price" />
+				</Field>
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Primary" OnClick="UpdateProductAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" OnClick="CloseCreateProductModal">@L["Cancel"]</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
