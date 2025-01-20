@@ -10,14 +10,27 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace ProiectConta.Exits
 {
-    public class Exit : AuditedAggregateRoot<Guid>
+    public class Exit : FullAuditedAggregateRoot<Guid>
     {
         public DateTime Date { get; set; }
         public Guid PartnerId { get; set; }
-        [ForeignKey("PartnerId")]
-        public virtual Partner Partner { get; set; }
-        [ForeignKey("GestionId")]
         public Guid GestionId { get; set; }
-        public virtual Gestion Gestion { get; set; }
+    
+        private Exit()
+        {
+
+        }
+
+        internal Exit(
+            Guid id,
+            DateTime date,
+            Guid partnerId,
+            Guid gestionId) : base(id)
+        {
+            Date = date;
+            PartnerId = partnerId;
+            GestionId = gestionId;
+        }
+
     }
 }

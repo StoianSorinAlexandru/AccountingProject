@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProiectConta.Migrations
 {
     /// <inheritdoc />
-    public partial class Implemented_Models : Migration
+    public partial class Added_Exits : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -413,6 +413,52 @@ namespace ProiectConta.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppEntries",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PartnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppEntries", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppExits",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PartnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppExits", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppGestions",
                 columns: table => new
                 {
@@ -797,118 +843,6 @@ namespace ProiectConta.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppEntries",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PartnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppEntries", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppEntries_AppGestions_GestionId",
-                        column: x => x.GestionId,
-                        principalTable: "AppGestions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AppEntries_AppPartners_PartnerId",
-                        column: x => x.PartnerId,
-                        principalTable: "AppPartners",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AppExits",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PartnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppExits", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppExits_AppGestions_GestionId",
-                        column: x => x.GestionId,
-                        principalTable: "AppGestions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AppExits_AppPartners_PartnerId",
-                        column: x => x.PartnerId,
-                        principalTable: "AppPartners",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OpenIddictAuthorizations",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Scopes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Subject = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
-                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OpenIddictAuthorizations", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OpenIddictAuthorizations_OpenIddictApplications_ApplicationId",
-                        column: x => x.ApplicationId,
-                        principalTable: "OpenIddictApplications",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AbpEntityPropertyChanges",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EntityChangeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NewValue = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
-                    OriginalValue = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
-                    PropertyName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    PropertyTypeFullName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AbpEntityPropertyChanges", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AbpEntityPropertyChanges_AbpEntityChanges_EntityChangeId",
-                        column: x => x.EntityChangeId,
-                        principalTable: "AbpEntityChanges",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AppDetailedEntries",
                 columns: table => new
                 {
@@ -972,6 +906,54 @@ namespace ProiectConta.Migrations
                         name: "FK_AppDetailedExits_AppProducts_ProductId",
                         column: x => x.ProductId,
                         principalTable: "AppProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIddictAuthorizations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Scopes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Subject = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(40)", maxLength: 40, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictAuthorizations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpenIddictAuthorizations_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AbpEntityPropertyChanges",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    EntityChangeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NewValue = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    OriginalValue = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    PropertyName = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    PropertyTypeFullName = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AbpEntityPropertyChanges", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AbpEntityPropertyChanges_AbpEntityChanges_EntityChangeId",
+                        column: x => x.EntityChangeId,
+                        principalTable: "AbpEntityChanges",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1249,26 +1231,6 @@ namespace ProiectConta.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppEntries_GestionId",
-                table: "AppEntries",
-                column: "GestionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppEntries_PartnerId",
-                table: "AppEntries",
-                column: "PartnerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppExits_GestionId",
-                table: "AppExits",
-                column: "GestionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppExits_PartnerId",
-                table: "AppExits",
-                column: "PartnerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AppProducts_Name",
                 table: "AppProducts",
                 column: "Name");
@@ -1386,6 +1348,12 @@ namespace ProiectConta.Migrations
                 name: "AppDetailedExits");
 
             migrationBuilder.DropTable(
+                name: "AppGestions");
+
+            migrationBuilder.DropTable(
+                name: "AppPartners");
+
+            migrationBuilder.DropTable(
                 name: "AppReports");
 
             migrationBuilder.DropTable(
@@ -1423,12 +1391,6 @@ namespace ProiectConta.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpAuditLogs");
-
-            migrationBuilder.DropTable(
-                name: "AppGestions");
-
-            migrationBuilder.DropTable(
-                name: "AppPartners");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictApplications");

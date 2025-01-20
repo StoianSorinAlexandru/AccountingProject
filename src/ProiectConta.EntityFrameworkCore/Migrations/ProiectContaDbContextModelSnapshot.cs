@@ -159,6 +159,14 @@ namespace ProiectConta.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -166,6 +174,12 @@ namespace ProiectConta.Migrations
 
                     b.Property<Guid>("GestionId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
 
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2")
@@ -179,10 +193,6 @@ namespace ProiectConta.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GestionId");
-
-                    b.HasIndex("PartnerId");
 
                     b.ToTable("AppEntries", (string)null);
                 });
@@ -210,6 +220,14 @@ namespace ProiectConta.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("DeleterId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("DeleterId");
+
+                    b.Property<DateTime?>("DeletionTime")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("DeletionTime");
+
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)")
@@ -217,6 +235,12 @@ namespace ProiectConta.Migrations
 
                     b.Property<Guid>("GestionId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("IsDeleted");
 
                     b.Property<DateTime?>("LastModificationTime")
                         .HasColumnType("datetime2")
@@ -230,10 +254,6 @@ namespace ProiectConta.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GestionId");
-
-                    b.HasIndex("PartnerId");
 
                     b.ToTable("AppExits", (string)null);
                 });
@@ -2255,44 +2275,6 @@ namespace ProiectConta.Migrations
                     b.Navigation("Exit");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("ProiectConta.Entries.Entry", b =>
-                {
-                    b.HasOne("ProiectConta.Gestions.Gestion", "Gestion")
-                        .WithMany()
-                        .HasForeignKey("GestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProiectConta.Partners.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gestion");
-
-                    b.Navigation("Partner");
-                });
-
-            modelBuilder.Entity("ProiectConta.Exits.Exit", b =>
-                {
-                    b.HasOne("ProiectConta.Gestions.Gestion", "Gestion")
-                        .WithMany()
-                        .HasForeignKey("GestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProiectConta.Partners.Partner", "Partner")
-                        .WithMany()
-                        .HasForeignKey("PartnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gestion");
-
-                    b.Navigation("Partner");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogAction", b =>

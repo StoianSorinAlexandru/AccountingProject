@@ -70,6 +70,18 @@ public class ProiectContaMenuContributor : IMenuContributor
                     l["Menu:Gestions"],
                     url: "/gestions"
                 )
+            ).AddItem(
+                new ApplicationMenuItem(
+                    "ProiectConta.Entries",
+                    l["Menu:Entries"],
+                    url: "/entries"
+                )
+            ).AddItem(
+                new ApplicationMenuItem(
+                    "ProiectConta.Exits",
+                    l["Menu:Exits"],
+                    url: "/exits"
+                )
             )
         );
 

@@ -1,0 +1,73 @@
+﻿@page "/exits"
+@using ProiectConta.Exits
+@using ProiectConta.Localization
+@using Volo.Abp.AspNetCore.Components.Web
+@inherits ProiectContaComponentBase
+@inject IExitAppService ExitAppService
+@inject AbpBlazorMessageLocalizerHelper<ProiectContaResource> LH
+
+<Card>
+	<CardHeader>
+		<Row Class="justify-content-between">
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<h2>@L["Exits"]</h2>
+			</Column>
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<Button Color="Color.Primary" Clicked="OpenCreateExitModal">
+					@L["AddExit"]
+				</Button>
+			</Column>
+		</Row>
+	</CardHeader>
+	<CardBody>
+		<DataGrid TItem="ExitDto"
+				  Data="ExitList"
+				  TotalItems="TotalCount"
+				  ShowPager="true"
+				  PageSize="PageSize">
+			<DataGridColumns>
+				<DataGridColumn TItem="ExitDto" Field="@nameof(ExitDto.Date)" Caption="@L["Date"]" />
+				<DataGridColumn TItem="ExitDto" Caption="@L["Actions"]">
+					<Button Color="Color.Primary" OnClick="EditExitAsync">Edit</Button> |
+					<Button Color="Color.Danger" OnClick="DeleteExitAsync">Delete</Button>
+				</DataGridColumn>
+			</DataGridColumns>
+		</DataGrid>
+	</CardBody>
+</Card>
+
+<Modal Animated="true" @ref="CreateExitModal">
+	<ModalContent IsCentered="true">
+		<Form>
+			<ModalHeader>
+				<ModalTitle>@L["AddExit"]</ModalTitle>
+				<CloseButton OnClick="CloseCreateExitModal" />
+			</ModalHeader>
+			<ModalBody>
+
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="CreateExitAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseCreateExitModal">@L["Cancel"]</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
+
+<Modal Animated="true" @ref="EditExitModal">
+		<ModalContent IsCentered="true">
+			<Form>
+				<ModalHeader>
+					<ModalTitle>@L["EditExit"]</ModalTitle>
+					<CloseButton OnClick="CloseEditExitModal" />
+				</ModalHeader>
+				<ModalBody>
+					<EditExitForm Exit="SelectedExit" OnValidSubmit="UpdateExitAsync" />
+				</ModalBody>
+				<ModalFooter>
+					<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="UpdateExitAsync">@L["Save"]</Button>
+					<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseEditExitModal">@L["Cancel"]</Button>
+				</ModalFooter>
+			</Form>
+		</ModalContent>
+</Modal>

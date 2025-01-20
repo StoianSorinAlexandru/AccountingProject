@@ -25,6 +25,8 @@ namespace ProiectConta
         private readonly ProductManager _productManager;
         private readonly PartnerManager _partnerManager;
         private readonly GestionManager _gestionManager;
+        private readonly EntryManager _entryManager;
+        private readonly ExitManager _exitManager;
 
         public ProiectContaSeedContributor(
             IRepository<Gestion, Guid> gestionRepository,
@@ -36,7 +38,9 @@ namespace ProiectConta
             IRepository<DetailedExit, Guid> detailedExitRepository,
             ProductManager productManager,
             PartnerManager partnerManager,
-            GestionManager gestionManager
+            GestionManager gestionManager,
+            EntryManager entryManager,
+            ExitManager exitManager
         )
         {
             _gestionRepository = gestionRepository;
@@ -49,6 +53,8 @@ namespace ProiectConta
             _productManager = productManager;
             _partnerManager = partnerManager;
             _gestionManager = gestionManager;
+            _entryManager = entryManager;
+            _exitManager = exitManager;
         }
 
         public async Task SeedAsync(DataSeedContext context)
@@ -57,15 +63,18 @@ namespace ProiectConta
             if (await _productRepository.GetCountAsync() <= 0)
             {
                 await _productRepository.InsertAsync(
-                    await _productManager.CreateAsync("Product A", 10.5f)
+                    await _productManager.CreateAsync("Product A", 10.5f),
+                    autoSave: true
                     );
 
                 await _productRepository.InsertAsync(
-                    await _productManager.CreateAsync("Product B", 15.75f)
+                    await _productManager.CreateAsync("Product B", 15.75f),
+                    autoSave: true
                     );
 
                 await _productRepository.InsertAsync(
-                    await _productManager.CreateAsync("Product C", 7.30f)
+                    await _productManager.CreateAsync("Product C", 7.30f),
+                    autoSave: true
                     );
             }
 
@@ -74,11 +83,13 @@ namespace ProiectConta
             {
 
                 await _partnerRepository.InsertAsync(
-                    await _partnerManager.CreateAsync("Partner A", "123456", "123 Street A", PartnerType.Client)
+                    await _partnerManager.CreateAsync("Partner A", "123456", "123 Street A", PartnerType.Client),
+                    autoSave: true
                     );
 
                 await _partnerRepository.InsertAsync(
-                    await _partnerManager.CreateAsync("Partner B", "654321", "456 Street B", PartnerType.Client)
+                    await _partnerManager.CreateAsync("Partner B", "654321", "456 Street B", PartnerType.Client),
+                    autoSave: true
                     );
 
             }
@@ -86,52 +97,56 @@ namespace ProiectConta
             // Seed Gestions
             if (await _gestionRepository.GetCountAsync() <= 0)
             {
-                //await _gestionRepository.InsertAsync(
-                //    new Gestion { Name = "Gestion A" },
-                //    autoSave: true
-                //);
-
-                //await _gestionRepository.InsertAsync(
-                //    new Gestion { Name = "Gestion B" },
-                //    autoSave: true
-                //);
                 await _gestionRepository.InsertAsync(
-                    await _gestionManager.CreateAsync("Gestion A")
+                    await _gestionManager.CreateAsync("Gestion A"),
+                    autoSave: true
                     );
 
                 await _gestionRepository.InsertAsync(
-                    await _gestionManager.CreateAsync("Gestion B")
+                    await _gestionManager.CreateAsync("Gestion B"),
+                    autoSave: true
                     );
             }
 
             // Seed Entries
-            //if (await _entryRepository.GetCountAsync() <= 0)
-            //{
-            //    var partnerA = await _partnerRepository.FirstOrDefaultAsync(p => p.Name == "Partner A");
-            //    var partnerB = await _partnerRepository.FirstOrDefaultAsync(p => p.Name == "Partner B");
-            //    var gestionA = await _gestionRepository.FirstOrDefaultAsync(g => g.Name == "Gestion A");
-            //    var gestionB = await _gestionRepository.FirstOrDefaultAsync(g => g.Name == "Gestion B");
+            if (await _entryRepository.GetCountAsync() <= 0)
+            {
+                var partnerA = await _partnerRepository.FirstOrDefaultAsync(p => p.Name == "Partner A");
+                var partnerB = await _partnerRepository.FirstOrDefaultAsync(p => p.Name == "Partner B");
+                var gestionA = await _gestionRepository.FirstOrDefaultAsync(g => g.Name == "Gestion A");
+                var gestionB = await _gestionRepository.FirstOrDefaultAsync(g => g.Name == "Gestion B");
 
-            //    await _entryRepository.InsertAsync(
-            //        new Entry
-            //        {
-            //            Date = DateTime.Parse("2023-01-01"),
-            //            PartnerId = partnerA.Id,
-            //            GestionId = gestionA.Id
-            //        },
-            //        autoSave: true
-            //    );
+                //await _entryRepository.InsertAsync(
+                //    new Entry
+                //    {
+                //        Date = DateTime.Parse("2023-01-01"),
+                //        PartnerId = partnerA.Id,
+                //        GestionId = gestionA.Id
+                //    },
+                //    autoSave: true
+                //);
 
-            //    await _entryRepository.InsertAsync(
-            //        new Entry
-            //        {
-            //            Date = DateTime.Parse("2023-02-01"),
-            //            PartnerId = partnerB.Id,
-            //            GestionId = gestionB.Id
-            //        },
-            //        autoSave: true
-            //    );
-            //}
+                //await _entryRepository.InsertAsync(
+                //    new Entry
+                //    {
+                //        Date = DateTime.Parse("2023-02-01"),
+                //        PartnerId = partnerB.Id,
+                //        GestionId = gestionB.Id
+                //    },
+                //    autoSave: true
+                //);
+
+                await _entryRepository.InsertAsync(
+                    await _entryManager.CreateAsync(DateTime.Parse("2023-01-01"), partnerA.Id, gestionA.Id),
+                    autoSave: true
+                    );
+
+                await _entryRepository.InsertAsync(
+                    await _entryManager.CreateAsync(DateTime.Parse("2023-02-01"), partnerB.Id, gestionB.Id),
+                    autoSave: true
+                    );
+
+            }
 
             // Seed Detailed Entries
             //if (await _detailedEntryRepository.GetCountAsync() <= 0)
@@ -159,33 +174,35 @@ namespace ProiectConta
             //}
 
             // Seed Exits
-            //if (await _exitRepository.GetCountAsync() <= 0)
-            //{
-            //    var gestionA = await _gestionRepository.FirstOrDefaultAsync(g => g.Name == "Gestion A");
-            //    var gestionB = await _gestionRepository.FirstOrDefaultAsync(g => g.Name == "Gestion B");
-            //    var partnerA = await _partnerRepository.FirstOrDefaultAsync(p => p.Name == "Partner A");
-            //    var partnerB = await _partnerRepository.FirstOrDefaultAsync(p => p.Name == "Partner B");
+            if (await _exitRepository.GetCountAsync() <= 0)
+            {
+                var gestionA = await _gestionRepository.FirstOrDefaultAsync(g => g.Name == "Gestion A");
+                var gestionB = await _gestionRepository.FirstOrDefaultAsync(g => g.Name == "Gestion B");
+                var partnerA = await _partnerRepository.FirstOrDefaultAsync(p => p.Name == "Partner A");
+                var partnerB = await _partnerRepository.FirstOrDefaultAsync(p => p.Name == "Partner B");
 
-            //    await _exitRepository.InsertAsync(
-            //        new Exit
-            //        {
-            //            Date = DateTime.Parse("2023-03-01"),
-            //            GestionId = gestionA.Id,
-            //            PartnerId = partnerA.Id // Set the PartnerId
-            //        },
-            //        autoSave: true
-            //    );
+                await _exitRepository.InsertAsync(
+                    //new Exit
+                    //{
+                    //    Date = DateTime.Parse("2023-03-01"),
+                    //    GestionId = gestionA.Id,
+                    //    PartnerId = partnerA.Id // Set the PartnerId
+                    //},
+                    await _exitManager.CreateAsync(DateTime.Parse("2023-03-01"), partnerA.Id, gestionA.Id),
+                    autoSave: true
+                );
 
-            //    await _exitRepository.InsertAsync(
-            //        new Exit
-            //        {
-            //            Date = DateTime.Parse("2023-04-01"),
-            //            GestionId = gestionB.Id,
-            //            PartnerId = partnerB.Id // Set the PartnerId
-            //        },
-            //        autoSave: true
-            //    );
-            //}
+                await _exitRepository.InsertAsync(
+                    //new Exit
+                    //{
+                    //    Date = DateTime.Parse("2023-04-01"),
+                    //    GestionId = gestionB.Id,
+                    //    PartnerId = partnerB.Id // Set the PartnerId
+                    //},
+                    await _exitManager.CreateAsync(DateTime.Parse("2023-04-01"), partnerB.Id, gestionB.Id),
+                    autoSave: true
+                );
+            }
 
 
             // Seed Detailed Exits

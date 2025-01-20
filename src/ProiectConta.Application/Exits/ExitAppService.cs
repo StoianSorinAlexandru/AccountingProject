@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace ProiectConta.Exits
@@ -8,10 +9,12 @@ namespace ProiectConta.Exits
     public class ExitAppService : ApplicationService, IExitAppService
     {
         private readonly IExitRepository _exitRepository;
+        private readonly ExitManager _exitManager;
 
-        public ExitAppService(IExitRepository exitRepository)
+        public ExitAppService(IExitRepository exitRepository, ExitManager exitManager)
         {
             _exitRepository = exitRepository;
+            _exitManager = exitManager;
         }
 
         public async Task<ExitDto> GetAsync(Guid id)
@@ -20,30 +23,49 @@ namespace ProiectConta.Exits
             return ObjectMapper.Map<Exit, ExitDto>(exit);
         }
 
-        public async Task<List<ExitDto>> GetListAsync()
-        {
-            var exits = await _exitRepository.GetListAsync();
-            return ObjectMapper.Map<List<Exit>, List<ExitDto>>(exits);
-        }
-
         public async Task<ExitDto> CreateAsync(CreateUpdateExitDto input)
         {
-            var exit = ObjectMapper.Map<CreateUpdateExitDto, Exit>(input);
-            var createdExit = await _exitRepository.InsertAsync(exit);
-            return ObjectMapper.Map<Exit, ExitDto>(createdExit);
+            var exit = await _exitManager.CreateAsync(
+                input.Date,
+                input.PartnerId,
+                input.GestionId
+            );
+            await _exitRepository.InsertAsync(exit, autoSave: true);
+            return ObjectMapper.Map<Exit, ExitDto>(exit);
         }
 
-        public async Task<ExitDto> UpdateAsync(Guid id, CreateUpdateExitDto input)
+        public async Task UpdateAsync(Guid id, CreateUpdateExitDto input)
         {
             var exit = await _exitRepository.GetAsync(id);
-            ObjectMapper.Map(input, exit);
-            var updatedExit = await _exitRepository.UpdateAsync(exit);
-            return ObjectMapper.Map<Exit, ExitDto>(updatedExit);
+            if (exit.Date != input.Date)
+            {
+                await _exitManager.ChangeDateAsync(exit, input.Date);
+            }
+            exit.PartnerId = input.PartnerId;
+            exit.GestionId = input.GestionId;
+            await _exitRepository.UpdateAsync(exit);
         }
 
         public async Task DeleteAsync(Guid id)
         {
             await _exitRepository.DeleteAsync(id);
         }
+
+        public async Task<PagedResultDto<ExitDto>> GetListAsync(GetExitListDto input)
+        {
+            var exits = await _exitRepository.GetListAsync(
+                input.SkipCount,
+                input.MaxResultCount,
+                input.Sorting,
+                input.Filter
+            );
+            var totalCount = await _exitRepository.GetCountAsync();
+            return new PagedResultDto<ExitDto>(
+                totalCount,
+                ObjectMapper.Map<List<Exit>, List<ExitDto>>(exits)
+            );
+        }
+
+
     }
 }

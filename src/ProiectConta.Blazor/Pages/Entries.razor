@@ -1,0 +1,75 @@
+﻿@page "/entries"
+@using ProiectConta.Entries
+@using ProiectConta.Localization
+@using Volo.Abp.AspNetCore.Components.Web
+@inherits ProiectContaComponentBase
+@inject IEntryAppService EntryAppService
+@inject AbpBlazorMessageLocalizerHelper<ProiectContaResource> LH
+
+<Card>
+	<CardHeader>
+		<Row Class="justify-content-between">
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<h2>@L["Entries"]</h2>
+			</Column>
+			<Column ColumnSize="ColumnSize.IsAuto">
+				<Button Color="Color.Primary" Clicked="OpenCreateEntryModal">
+					@L["AddEntry"]
+				</Button>
+			</Column>
+		</Row>
+	</CardHeader>
+
+	<CardBody>
+		<DataGrid TItem="EntryDto"
+				  Data="EntryList"
+				  TotalItems="TotalCount"
+				  ShowPager="true"
+				  PageSize="PageSize">
+			<DataGridColumns>
+				<DataGridColumn TItem="EntryDto" Field="@nameof(EntryDto.Date)" Caption="@L["Date"]" />
+				<DataGridColumn TItem="EntryDto" Caption="@L["Actions"]">
+					<Button Color="Color.Primary" OnClick="EditEntryAsync">Edit</Button> |
+					<Button Color="Color.Danger" OnClick="DeleteEntryAsync">Delete</Button>
+				</DataGridColumn>
+			</DataGridColumns>
+		</DataGrid>			
+	</CardBody>
+
+</Card>
+
+<Modal Animated="true" @ref="CreateEntryModal">
+	<ModalContent IsCentered="true">
+		<Form>
+			<ModalHeader>
+				<ModalTitle>@L["AddEntry"]</ModalTitle>
+				<CloseButton OnClick="CloseCreateEntryModal" />
+			</ModalHeader>
+			<ModalBody>
+				
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="CreateEntryAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseCreateEntryModal">@L["Cancel"]</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>
+
+<Modal Animated="true" @ref="EditEntryModal">
+	<ModalContent IsCentered="true">
+		<Form>
+			<ModalHeader>
+				<ModalTitle>@L["EditEntry"]</ModalTitle>
+				<CloseButton OnClick="CloseEditEntryModal" />
+			</ModalHeader>
+			<ModalBody>
+
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="EditEntryAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseEditEntryModal">@L["Cancel"]</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+</Modal>

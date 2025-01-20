@@ -10,14 +10,26 @@ using Volo.Abp.Domain.Entities.Auditing;
 
 namespace ProiectConta.Entries
 {
-    public class Entry : AuditedAggregateRoot<Guid>
+    public class Entry : FullAuditedAggregateRoot<Guid>
     {
         public DateTime Date { get; set; }
         public Guid PartnerId { get; set; }
-        [ForeignKey("PartnerId")]
-        public virtual Partner Partner { get; set; }
         public Guid GestionId { get; set; }
-        [ForeignKey("GestionId")]
-        public virtual Gestion Gestion { get; set; }
+
+        private Entry()
+        {
+
+        }
+
+        internal Entry(
+            Guid id,
+            DateTime date,
+            Guid partnerId,
+            Guid gestionId) : base(id)
+        {
+            Date = date;
+            PartnerId = partnerId;
+            GestionId = gestionId;
+        }
     }
 }

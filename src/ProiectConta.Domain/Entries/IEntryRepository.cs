@@ -7,6 +7,13 @@ namespace ProiectConta.Entries
 {
     public interface IEntryRepository : IRepository<Entry, Guid>
     {
-        // Add custom methods if necessary
+        Task<Entry> FindByDateAsync(DateTime date);
+
+        Task<List<Entry>> GetListAsync(
+            int skipCount,
+            int maxResultCount,
+            string sorting,
+            string filter = null
+            );
     }
 }
