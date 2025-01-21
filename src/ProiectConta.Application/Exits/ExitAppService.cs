@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
@@ -30,6 +32,11 @@ namespace ProiectConta.Exits
                 input.PartnerId,
                 input.GestionId
             );
+            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await _exitRepository.InsertAsync(exit, autoSave: true);
+                transaction.Complete();
+            }
             await _exitRepository.InsertAsync(exit, autoSave: true);
             return ObjectMapper.Map<Exit, ExitDto>(exit);
         }
@@ -60,9 +67,18 @@ namespace ProiectConta.Exits
                 input.Filter
             );
             var totalCount = await _exitRepository.GetCountAsync();
+
+            var exitDtoList = exits.Select(exit => new ExitDto
+            {
+                Id = exit.Id,
+                Date = exit.Date,
+                PartnerId = exit.PartnerId,
+                GestionId = exit.GestionId
+            }).ToList();
+
             return new PagedResultDto<ExitDto>(
                 totalCount,
-                ObjectMapper.Map<List<Exit>, List<ExitDto>>(exits)
+                exitDtoList
             );
         }
 

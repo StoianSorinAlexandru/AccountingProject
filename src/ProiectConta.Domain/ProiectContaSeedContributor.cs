@@ -27,6 +27,7 @@ namespace ProiectConta
         private readonly GestionManager _gestionManager;
         private readonly EntryManager _entryManager;
         private readonly ExitManager _exitManager;
+        private readonly DetailedEntryManager _detailedEntryManager;
 
         public ProiectContaSeedContributor(
             IRepository<Gestion, Guid> gestionRepository,
@@ -40,7 +41,8 @@ namespace ProiectConta
             PartnerManager partnerManager,
             GestionManager gestionManager,
             EntryManager entryManager,
-            ExitManager exitManager
+            ExitManager exitManager,
+            DetailedEntryManager detailedEntryManager
         )
         {
             _gestionRepository = gestionRepository;
@@ -55,6 +57,7 @@ namespace ProiectConta
             _gestionManager = gestionManager;
             _entryManager = entryManager;
             _exitManager = exitManager;
+            _detailedEntryManager = detailedEntryManager;
         }
 
         public async Task SeedAsync(DataSeedContext context)
@@ -149,29 +152,45 @@ namespace ProiectConta
             }
 
             // Seed Detailed Entries
-            //if (await _detailedEntryRepository.GetCountAsync() <= 0)
-            //{
-            //    var entryA = await _entryRepository.FirstOrDefaultAsync(e => e.Date == DateTime.Parse("2023-01-01"));
-            //    var entryB = await _entryRepository.FirstOrDefaultAsync(e => e.Date == DateTime.Parse("2023-02-01"));
-            //    var productA = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product A");
-            //    var productB = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product B");
-            //    var productC = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product C");
+            if (await _detailedEntryRepository.GetCountAsync() <= 0)
+            {
+                var entryA = await _entryRepository.FirstOrDefaultAsync(e => e.Date == DateTime.Parse("2023-01-01"));
+                var entryB = await _entryRepository.FirstOrDefaultAsync(e => e.Date == DateTime.Parse("2023-02-01"));
+                var productA = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product A");
+                var productB = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product B");
+                var productC = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product C");
 
-            //    await _detailedEntryRepository.InsertAsync(
-            //        new DetailedEntry { EntryId = entryA.Id, ProductId = productA.Id, Quantity = 10 },
-            //        autoSave: true
-            //    );
+                //await _detailedEntryRepository.InsertAsync(
+                //    new DetailedEntry { EntryId = entryA.Id, ProductId = productA.Id, Quantity = 10 },
+                //    autoSave: true
+                //);
 
-            //    await _detailedEntryRepository.InsertAsync(
-            //        new DetailedEntry { EntryId = entryA.Id, ProductId = productB.Id, Quantity = 5 },
-            //        autoSave: true
-            //    );
+                //await _detailedEntryRepository.InsertAsync(
+                //    new DetailedEntry { EntryId = entryA.Id, ProductId = productB.Id, Quantity = 5 },
+                //    autoSave: true
+                //);
 
-            //    await _detailedEntryRepository.InsertAsync(
-            //        new DetailedEntry { EntryId = entryB.Id, ProductId = productC.Id, Quantity = 7 },
-            //        autoSave: true
-            //    );
-            //}
+                //await _detailedEntryRepository.InsertAsync(
+                //    new DetailedEntry { EntryId = entryB.Id, ProductId = productC.Id, Quantity = 7 },
+                //    autoSave: true
+                //);
+
+                await _detailedEntryRepository.InsertAsync(
+                    await _detailedEntryManager.CreateAsync(entryA.Id, productA.Id, 10, productA.Price * 10 ?? 0),
+                    autoSave: true
+                    );
+
+                await _detailedEntryRepository.InsertAsync(
+                    await _detailedEntryManager.CreateAsync(entryA.Id, productB.Id, 5, productB.Price * 5 ?? 0),
+                    autoSave: true
+                    );
+
+                await _detailedEntryRepository.InsertAsync(
+                    await _detailedEntryManager.CreateAsync(entryB.Id, productC.Id, 7, productC.Price * 7 ?? 0),
+                    autoSave: true
+                    );
+
+            }
 
             // Seed Exits
             if (await _exitRepository.GetCountAsync() <= 0)

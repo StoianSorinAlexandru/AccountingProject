@@ -1,6 +1,10 @@
 ﻿using Polly.Simmy;
+using ProiectConta.DetailedEntries;
+using ProiectConta.Gestions;
+using ProiectConta.Partners;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
@@ -10,11 +14,22 @@ namespace ProiectConta.Entries
     public class EntryAppService : ApplicationService, IEntryAppService
     {
         private readonly IEntryRepository _entryRepository;
+        private readonly IPartnerRepository _partnerRepository;
+        private readonly IGestionRepository _gestionRepository;
+        private readonly IDetailedEntryRepository _detailedEntryRepository;
         private readonly EntryManager _entryManager;
 
-        public EntryAppService(IEntryRepository entryRepository, EntryManager entryManager)
+        public EntryAppService(
+            IEntryRepository entryRepository, 
+            IPartnerRepository partnerRepository, 
+            IGestionRepository gestionRepository, 
+            IDetailedEntryRepository detailedEntryRepository, 
+            EntryManager entryManager)
         {
             _entryRepository = entryRepository;
+            _partnerRepository = partnerRepository;
+            _gestionRepository = gestionRepository;
+            _detailedEntryRepository = detailedEntryRepository;
             _entryManager = entryManager;
         }
 
@@ -26,10 +41,14 @@ namespace ProiectConta.Entries
 
         public async Task<EntryDto> CreateAsync(CreateUpdateEntryDto input)
         {
+
+            var partner = await _partnerRepository.FindByNameAsync(input.PartnerName);
+            var gestion = await _gestionRepository.FindByNameAsync(input.GestionName);
+
             var entry = await _entryManager.CreateAsync(
                 input.Date,
-                input.PartnerId,
-                input.GestionId
+                partner.Id,
+                gestion.Id
             );
             await _entryRepository.InsertAsync(entry, autoSave: true);
             return ObjectMapper.Map<Entry, EntryDto>(entry);
@@ -42,8 +61,11 @@ namespace ProiectConta.Entries
             {
                 await _entryManager.ChangeDateAsync(entry, input.Date);
             }
-            entry.PartnerId = input.PartnerId;
-            entry.GestionId = input.GestionId;
+
+            var partner = await _partnerRepository.FindByNameAsync(input.PartnerName);
+            var gestion = await _gestionRepository.FindByNameAsync(input.GestionName);
+            entry.PartnerId = partner.Id;
+            entry.GestionId = gestion.Id;
             await _entryRepository.UpdateAsync(entry);
         }
 
@@ -61,9 +83,24 @@ namespace ProiectConta.Entries
                 input.Filter
             );
             var totalCount = await _entryRepository.GetCountAsync();
+
+            var entryListDto = new List<EntryDto>();
+            foreach (var entry in entries)
+            {
+                var partnerName = await _partnerRepository.GetAsync(entry.PartnerId);
+                var gestionName = await _gestionRepository.GetAsync(entry.GestionId);
+                entryListDto.Add(new EntryDto
+                {
+                    Id = entry.Id,
+                    Date = entry.Date,
+                    PartnerName = partnerName.Name,
+                    GestionName = gestionName.Name
+                });
+            }
+
             return new PagedResultDto<EntryDto>(
                 totalCount,
-                ObjectMapper.Map<List<Entry>, List<EntryDto>>(entries)
+                entryListDto.AsReadOnly()
             );
         }
     }

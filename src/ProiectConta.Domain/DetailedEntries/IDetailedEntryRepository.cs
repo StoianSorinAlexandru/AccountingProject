@@ -7,6 +7,13 @@ namespace ProiectConta.DetailedEntries
 {
     public interface IDetailedEntryRepository : IRepository<DetailedEntry, Guid>
     {
-        // Add custom methods if necessary
+        Task<DetailedEntry> FindByEntryIdAsync(Guid id);
+
+        Task<List<DetailedEntry>> GetListAsync(
+            int skipCount,
+            int maxResultCount,
+            string sorting,
+            string filter = null
+            );
     }
 }

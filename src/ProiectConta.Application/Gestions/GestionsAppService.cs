@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Repositories;
 
 namespace ProiectConta.Gestions
 {
@@ -22,6 +25,11 @@ namespace ProiectConta.Gestions
             return ObjectMapper.Map<Gestion, GestionDto>(gestion);
         }
 
+        public async Task<List<GestionDto>> GetAllAsync()
+        {
+            var gestions = await _gestionRepository.GetListAsync();
+            return ObjectMapper.Map<List<Gestion>, List<GestionDto>>(gestions);
+        }
         public async Task<GestionDto> GetGestionAsync(string name)
         {
             var gestion = await _gestionRepository.FindByNameAsync(name);
@@ -33,7 +41,13 @@ namespace ProiectConta.Gestions
             var gestion = await _gestionManager.CreateAsync(
                 input.Name
             );
-            await _gestionRepository.InsertAsync(gestion, autoSave: true);
+            //await _gestionRepository.InsertAsync(gestion, autoSave: true);
+            using (var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await _gestionRepository.InsertAsync(gestion);
+                transaction.Complete();
+            }
+
             return ObjectMapper.Map<Gestion, GestionDto>(gestion);
         }
 
@@ -64,10 +78,23 @@ namespace ProiectConta.Gestions
                 input.Sorting,
                 input.Filter
             );
-            var totalCount = await _gestionRepository.GetCountAsync();
+            //var totalCount = await _gestionRepository.GetCountAsync();
+            var totalCount = input.Filter == null
+                ? await _gestionRepository.CountAsync()
+                : await _gestionRepository.CountAsync(
+                    gestion => gestion.Name.Contains(input.Filter));
+
+            //Folosim mapper manual pentru a evita problema de scope a OpjectMapper.
+            var gestionDtoList = gestions.Select(gestion => new GestionDto
+            {
+                Id = gestion.Id,
+                Name = gestion.Name
+            }).ToList();
+
             return new PagedResultDto<GestionDto>(
                 totalCount,
-                ObjectMapper.Map<List<Gestion>, List<GestionDto>>(gestions)
+                gestionDtoList
+            //ObjectMapper.Map<List<Gestion>, List<GestionDto>>(gestions)
             );
         }
 

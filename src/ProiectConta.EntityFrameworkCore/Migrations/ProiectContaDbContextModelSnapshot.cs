@@ -70,10 +70,6 @@ namespace ProiectConta.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("EntryId");
-
-                    b.HasIndex("ProductId");
-
                     b.ToTable("AppDetailedEntries", (string)null);
                 });
 
@@ -2237,25 +2233,6 @@ namespace ProiectConta.Migrations
                     b.HasKey("TenantId", "Name");
 
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
-                });
-
-            modelBuilder.Entity("ProiectConta.DetailedEntries.DetailedEntry", b =>
-                {
-                    b.HasOne("ProiectConta.Entries.Entry", "Entry")
-                        .WithMany()
-                        .HasForeignKey("EntryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProiectConta.Products.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Entry");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ProiectConta.DetailedExits.DetailedExit", b =>

@@ -27,13 +27,32 @@
 				  ShowPager="true"
 				  PageSize="PageSize">
 			<DataGridColumns>
+				<DataGridColumn 
+					TItem="PartnerDto" 
+					Caption="@L["Actions"]"
+					Field="@nameof(PartnerDto.Id)">
+					
+					<DisplayTemplate>
+						<Dropdown>
+							<DropdownToggle Color="Color.Primary">
+								@L["Actions"]
+							</DropdownToggle>
+							<DropdownMenu>
+								<DropdownItem Clicked="() => OpenEditPartnerModal(context)">
+									@L["Edit"]
+								</DropdownItem>
+								<DropdownItem Clicked="() => DeletePartnerAsync(context)">
+									@L["Delete"]
+								</DropdownItem>
+							</DropdownMenu>
+						</Dropdown>
+					</DisplayTemplate>
+
+				</DataGridColumn>
 				<DataGridColumn TItem="PartnerDto" Field="@nameof(PartnerDto.Name)" Caption="@L["Name"]" />
 				<DataGridColumn TItem="PartnerDto" Field="@nameof(PartnerDto.CUI)" Caption="@L["CUI"]" />
 				<DataGridColumn TItem="PartnerDto" Field="@nameof(PartnerDto.Address)" Caption="@L["Address"]" />
-				<DataGridColumn TItem="PartnerDto" Caption="@L["Actions"]">
-					<Button Color="Color.Primary" OnClick="EditPartnerAsync">Edit</Button> |
-					<Button Color="Color.Danger" OnClick="DeletePartnerAsync">Delete</Button>
-				</DataGridColumn>
+
 			</DataGridColumns>
 		</DataGrid>
 
@@ -45,25 +64,25 @@
 		<Form>
 			<ModalHeader>
 				<ModalTitle>@L["AddPartner"]</ModalTitle>
-				<CloseButton OnClick="CloseCreatePartnerModal" />
+				<CloseButton Clicked="CloseCreatePartnerModal" />
 			</ModalHeader>
 			<ModalBody>
 				<Field>
 					<FieldLabel>@L["Name"]</FieldLabel>
-					<TextEdit @bind-Value="@NewPartner.Name" />
+					<TextEdit @bind-Text="@NewPartner.Name" />
 				</Field>
 				<Field>
 					<FieldLabel>@L["CUI"]</FieldLabel>
-					<TextEdit @bind-Value="@NewPartner.CUI" />
+					<TextEdit @bind-Text="@NewPartner.CUI" />
 				</Field>
 				<Field>
 					<FieldLabel>@L["Address"]</FieldLabel>
-					<TextEdit @bind-Value="@NewPartner.Address" />
+					<TextEdit @bind-Text="@NewPartner.Address" />
 				</Field>
 			</ModalBody>
 			<ModalFooter>
-				<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="CreatePartnerAsync">@L["Save"]</Button>
-				<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseCreatePartnerModal">@L["Cancel"]</Button>
+				<Button Color="Color.Primary" Type="@ButtonType.Submit" Clicked="CreatePartnerAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" Type="@ButtonType.Submit" Clicked="CloseCreatePartnerModal">@L["Cancel"]</Button>
 			</ModalFooter>
 		</Form>
 	</ModalContent>
@@ -79,20 +98,20 @@
 			<ModalBody>
 				<Field>
 					<FieldLabel>@L["Name"]</FieldLabel>
-					<TextEdit @bind-Value="@EditingPartner.Name" />
+					<TextEdit @bind-Text="@EditingPartner.Name" />
 				</Field>
 				<Field>
 					<FieldLabel>@L["CUI"]</FieldLabel>
-					<TextEdit @bind-Value="@EditingPartner.CUI" />
+					<TextEdit @bind-Text="@EditingPartner.CUI" />
 				</Field>
 				<Field>
 					<FieldLabel>@L["Address"]</FieldLabel>
-					<TextEdit @bind-Value="@EditingPartner.Address" />
+					<TextEdit @bind-Text="@EditingPartner.Address" />
 				</Field>
 			</ModalBody>
 			<ModalFooter>
-				<Button Color="Color.Primary" Type="@ButtonType.Submit" OnClick="UpdatePartnerAsync">@L["Save"]</Button>
-				<Button Color="Color.Secondary" Type="@ButtonType.Submit" OnClick="CloseEditPartnerModal">@L["Cancel"]</Button>
+				<Button Color="Color.Primary" Type="@ButtonType.Submit" Clicked="UpdatePartnerAsync">@L["Save"]</Button>
+				<Button Color="Color.Secondary" Type="@ButtonType.Submit" Clicked="CloseEditPartnerModal">@L["Cancel"]</Button>
 			</ModalFooter>
 		</Form>
 	</ModalContent>

@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace ProiectConta.Migrations
 {
     [DbContext(typeof(ProiectContaDbContext))]
-    [Migration("20250120120513_Added_Exits")]
-    partial class Added_Exits
+    [Migration("20250121141128_Added_DE")]
+    partial class Added_DE
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,10 +72,6 @@ namespace ProiectConta.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EntryId");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("AppDetailedEntries", (string)null);
                 });
@@ -2240,25 +2236,6 @@ namespace ProiectConta.Migrations
                     b.HasKey("TenantId", "Name");
 
                     b.ToTable("AbpTenantConnectionStrings", (string)null);
-                });
-
-            modelBuilder.Entity("ProiectConta.DetailedEntries.DetailedEntry", b =>
-                {
-                    b.HasOne("ProiectConta.Entries.Entry", "Entry")
-                        .WithMany()
-                        .HasForeignKey("EntryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProiectConta.Products.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Entry");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("ProiectConta.DetailedExits.DetailedExit", b =>

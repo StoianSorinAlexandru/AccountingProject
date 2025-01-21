@@ -1,6 +1,8 @@
-﻿using System;
+﻿using ProiectConta.Products;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
 namespace ProiectConta.DetailedEntries
@@ -8,10 +10,14 @@ namespace ProiectConta.DetailedEntries
     public class DetailedEntryAppService : ApplicationService, IDetailedEntryAppService
     {
         private readonly IDetailedEntryRepository _detailedEntryRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly DetailedEntryManager _detailedEntryManager;
 
-        public DetailedEntryAppService(IDetailedEntryRepository detailedEntryRepository)
+        public DetailedEntryAppService(IDetailedEntryRepository detailedEntryRepository, IProductRepository productRepository, DetailedEntryManager detailedEntryManager)
         {
             _detailedEntryRepository = detailedEntryRepository;
+            _productRepository = productRepository;
+            _detailedEntryManager = detailedEntryManager;
         }
 
         public async Task<DetailedEntryDto> GetAsync(Guid id)
@@ -20,30 +26,48 @@ namespace ProiectConta.DetailedEntries
             return ObjectMapper.Map<DetailedEntry, DetailedEntryDto>(detailedEntry);
         }
 
-        public async Task<List<DetailedEntryDto>> GetListAsync()
-        {
-            var detailedEntries = await _detailedEntryRepository.GetListAsync();
-            return ObjectMapper.Map<List<DetailedEntry>, List<DetailedEntryDto>>(detailedEntries);
-        }
-
         public async Task<DetailedEntryDto> CreateAsync(CreateUpdateDetailedEntryDto input)
         {
-            var detailedEntry = ObjectMapper.Map<CreateUpdateDetailedEntryDto, DetailedEntry>(input);
-            var createdDetailedEntry = await _detailedEntryRepository.InsertAsync(detailedEntry);
-            return ObjectMapper.Map<DetailedEntry, DetailedEntryDto>(createdDetailedEntry);
+            var product = await _productRepository.GetAsync(input.ProductId);
+            var productPrice = product.Price ?? 0; 
+            var detailedEntry = await _detailedEntryManager.CreateAsync(
+                input.EntryId,
+                input.ProductId,
+                input.Quantity,
+                input.Quantity * productPrice // value = quantity * price
+            );
+            await _detailedEntryRepository.InsertAsync(detailedEntry, autoSave: true);
+            return ObjectMapper.Map<DetailedEntry, DetailedEntryDto>(detailedEntry);
         }
 
-        public async Task<DetailedEntryDto> UpdateAsync(Guid id, CreateUpdateDetailedEntryDto input)
+        public async Task UpdateAsync(Guid id, CreateUpdateDetailedEntryDto input)
         {
             var detailedEntry = await _detailedEntryRepository.GetAsync(id);
-            ObjectMapper.Map(input, detailedEntry);
-            var updatedDetailedEntry = await _detailedEntryRepository.UpdateAsync(detailedEntry);
-            return ObjectMapper.Map<DetailedEntry, DetailedEntryDto>(updatedDetailedEntry);
+            var product = await _productRepository.GetAsync(input.ProductId);
+            var productPrice = product.Price ?? 0; 
+            detailedEntry.ProductId = input.ProductId;
+            detailedEntry.Quantity = input.Quantity;
+            detailedEntry.Value = input.Quantity * productPrice; // value = quantity * price
+            await _detailedEntryRepository.UpdateAsync(detailedEntry);
         }
 
         public async Task DeleteAsync(Guid id)
         {
             await _detailedEntryRepository.DeleteAsync(id);
+        }
+
+        public async Task<PagedResultDto<DetailedEntryDto>> GetListAsync(GetDetailedEntryListDto input)
+        {
+            var detailedEntries = await _detailedEntryRepository.GetListAsync(
+                input.SkipCount,
+                input.MaxResultCount,
+                input.Sorting
+            );
+            var detailedEntryDtos = ObjectMapper.Map<List<DetailedEntry>, List<DetailedEntryDto>>(detailedEntries);
+            return new PagedResultDto<DetailedEntryDto>(
+                await _detailedEntryRepository.GetCountAsync(),
+                detailedEntryDtos
+            );
         }
     }
 }

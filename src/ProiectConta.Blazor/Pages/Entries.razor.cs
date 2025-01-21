@@ -1,6 +1,8 @@
 ﻿using Blazorise;
 using Blazorise.DataGrid;
 using ProiectConta.Entries;
+using ProiectConta.Gestions;
+using ProiectConta.Partners;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +14,9 @@ namespace ProiectConta.Blazor.Pages;
 public partial class Entries
 {
     private IReadOnlyList<EntryDto> EntryList { get; set; }
-    
+    private IReadOnlyList<string> PartnerList { get; set; }
+    private IReadOnlyList<string> GestionList { get; set; }
+
     private int PageSize { get; } = LimitedResultRequestDto.DefaultMaxResultCount;
     private int CurrentPage { get; set; }
     private string CurrentSorting { get; set; }
@@ -33,7 +37,11 @@ public partial class Entries
 
     protected override async Task OnInitializedAsync()
     {
+        PartnerList = new List<string>();
+        GestionList = new List<string>();
         await GetEntriesAsync();
+        await GetPartnersAsync();
+        await GetGestionsAsync();
     }
 
     private async Task GetEntriesAsync()
@@ -48,6 +56,20 @@ public partial class Entries
         );
         EntryList = result.Items;
         TotalCount = (int)result.TotalCount;
+    }
+
+    private async Task GetPartnersAsync()
+    {
+        var result = await PartnerAppService.GetAllAsync();
+
+        PartnerList = result.Select(p => p.Name).ToList();
+    }
+
+    private async Task GetGestionsAsync()
+    {
+        var result = await GestionAppService.GetAllAsync();
+
+        GestionList = result.Select(g => g.Name).ToList();
     }
 
     private async Task InDataGridReadAsync(DataGridReadDataEventArgs<EntryDto> e)
@@ -71,10 +93,10 @@ public partial class Entries
         CreateEntryModal.Hide();
     }
 
-    private void OpenEditEntryModal(Guid id)
+    private void OpenEditEntryModal(EntryDto entry)
     {
-        EditingEntryId = id;
-        EditingEntry = ObjectMapper.Map<EntryDto, CreateUpdateEntryDto>(EntryList.First(e => e.Id == id));
+        EditingEntryId = entry.Id;
+        EditingEntry = ObjectMapper.Map<EntryDto, CreateUpdateEntryDto>(EntryList.First(e => e.Id == entry.Id));
         EditEntryModal.Show();
     }
 
@@ -99,9 +121,9 @@ public partial class Entries
         EditEntryModal.Hide();
     }
 
-    private async Task DeleteEntryAsync(Guid id)
+    private async Task DeleteEntryAsync(EntryDto entry)
     {
-        await EntryAppService.DeleteAsync(id);
+        await EntryAppService.DeleteAsync(entry.Id);
         await GetEntriesAsync();
     }
 

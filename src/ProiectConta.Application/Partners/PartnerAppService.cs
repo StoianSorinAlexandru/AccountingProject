@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
@@ -24,6 +25,12 @@ namespace ProiectConta.Partners
             return ObjectMapper.Map<Partner, PartnerDto>(partner);
         }
 
+        public async Task<List<PartnerDto>> GetAllAsync()
+        {
+            var partners = await _partnerRepository.GetListAsync();
+            return partners.Select(partner => ObjectMapper.Map<Partner, PartnerDto>(partner)).ToList();
+        }
+
         public async Task<PartnerDto> GetPartnerAsync(string name)
         {
             var partner = await _partnerRepository.FindByNameAsync(name);
@@ -38,7 +45,12 @@ namespace ProiectConta.Partners
                 input.Address,
                 input.Type
             );
-            await _partnerRepository.InsertAsync(partner, autoSave: true);
+
+            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await _partnerRepository.InsertAsync(partner);
+                transaction.Complete();
+            }
             return ObjectMapper.Map<Partner, PartnerDto>(partner);
         }
 
@@ -75,9 +87,18 @@ namespace ProiectConta.Partners
 
             var totalCount = await _partnerRepository.GetCountAsync();
 
+            var partnerListDto = partners.Select(partner => new PartnerDto
+            {
+                Id = partner.Id,
+                Name = partner.Name,
+                CUI = partner.CUI,
+                Address = partner.Address,
+                Type = partner.Type
+            }).ToList();
+
             return new PagedResultDto<PartnerDto>(
                 totalCount,
-                ObjectMapper.Map<List<Partner>, List<PartnerDto>>(partners)
+                partnerListDto
             );
         }
 

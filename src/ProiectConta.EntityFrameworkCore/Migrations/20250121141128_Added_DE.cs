@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProiectConta.Migrations
 {
     /// <inheritdoc />
-    public partial class Added_Exits : Migration
+    public partial class Added_DE : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -410,6 +410,27 @@ namespace ProiectConta.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AbpUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppDetailedEntries",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EntryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppDetailedEntries", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -843,39 +864,6 @@ namespace ProiectConta.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppDetailedEntries",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EntryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppDetailedEntries", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppDetailedEntries_AppEntries_EntryId",
-                        column: x => x.EntryId,
-                        principalTable: "AppEntries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AppDetailedEntries_AppProducts_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "AppProducts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AppDetailedExits",
                 columns: table => new
                 {
@@ -1211,16 +1199,6 @@ namespace ProiectConta.Migrations
                 column: "UserName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppDetailedEntries_EntryId",
-                table: "AppDetailedEntries",
-                column: "EntryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppDetailedEntries_ProductId",
-                table: "AppDetailedEntries",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AppDetailedExits_ExitId",
                 table: "AppDetailedExits",
                 column: "ExitId");
@@ -1348,6 +1326,9 @@ namespace ProiectConta.Migrations
                 name: "AppDetailedExits");
 
             migrationBuilder.DropTable(
+                name: "AppEntries");
+
+            migrationBuilder.DropTable(
                 name: "AppGestions");
 
             migrationBuilder.DropTable(
@@ -1376,9 +1357,6 @@ namespace ProiectConta.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpUsers");
-
-            migrationBuilder.DropTable(
-                name: "AppEntries");
 
             migrationBuilder.DropTable(
                 name: "AppExits");

@@ -40,5 +40,14 @@ namespace ProiectConta.Gestions
                 .ToListAsync();
         }
 
+        public async Task<Gestion> GetAsync(Guid id)
+        {
+            var dbSet = await GetDbSetAsync();
+            return await dbSet.FirstOrDefaultAsync(gestion => gestion.Id == id);
+
+        }
+
+
+
     }
 }

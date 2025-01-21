@@ -16,5 +16,8 @@ namespace ProiectConta.Gestions
             string filter = null
         );
 
+        Task<Gestion> GetAsync(Guid id);
+
+
     }
 }

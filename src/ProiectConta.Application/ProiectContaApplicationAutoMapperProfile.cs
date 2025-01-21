@@ -25,5 +25,16 @@ public class ProiectContaApplicationAutoMapperProfile : Profile
         CreateMap<Entry, EntryDto>();
         CreateMap<DetailedExit, DetailedExitDto>();
         CreateMap<DetailedEntry, DetailedEntryDto>();
+
+        CreateMap<PartnerDto, CreateUpdatePartnerDto>();
+        CreateMap<GestionDto, CreateUpdateGestionDto>();
+        CreateMap<ProductDto, CreateUpdateProductDto>();
+        CreateMap<ReportDto, CreateUpdateReportDto>();
+        CreateMap<ExitDto, CreateUpdateExitDto>();
+        CreateMap<EntryDto, CreateUpdateEntryDto>();
+        CreateMap<DetailedExitDto, CreateUpdateDetailedExitDto>();
+        CreateMap<DetailedEntryDto, CreateUpdateDetailedEntryDto>();
+
+
     }
 }

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using System.Transactions;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Repositories;
 
 namespace ProiectConta.Products
 {
@@ -39,7 +42,12 @@ namespace ProiectConta.Products
                 input.Price ?? 0
             );
 
-            await _productRepository.InsertAsync(product, autoSave: true);
+            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                await _productRepository.InsertAsync(product);
+                transaction.Complete();
+            }
+            //await _productRepository.InsertAsync(product, autoSave: true);
 
             return ObjectMapper.Map<Product, ProductDto>(product);
         }
@@ -77,11 +85,22 @@ namespace ProiectConta.Products
                 input.Filter
             );
 
-            var totalCount = await _productRepository.GetCountAsync();
+            var totalCount = input.Filter == null
+                ? await _productRepository.CountAsync()
+                : await _productRepository.CountAsync(
+                    product => product.Name.Contains(input.Filter));
+
+            var productDtoList = products.Select(product => new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price
+            }).ToList();
 
             return new PagedResultDto<ProductDto>(
                 totalCount,
-                ObjectMapper.Map<List<Product>, List<ProductDto>>(products)
+                productDtoList
+                //ObjectMapper.Map<List<Product>, List<ProductDto>>(products)
             );
         }
 
