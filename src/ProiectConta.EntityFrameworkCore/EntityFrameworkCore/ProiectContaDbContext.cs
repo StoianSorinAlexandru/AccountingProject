@@ -76,6 +76,17 @@ public class ProiectContaDbContext :
 
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        // Set a custom command timeout (in seconds)
+        optionsBuilder.UseSqlServer(options =>
+        {
+            options.CommandTimeout(180); // Timeout of 180 seconds
+        });
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

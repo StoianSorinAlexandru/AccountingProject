@@ -71,21 +71,30 @@
 			<ModalBody>
 				 <div>
 					<label>Partner:</label>
-					<Select @bind-Text="NewEntry.PartnerName" TItem="string" TValue="string">
+					<Select @bind-SelectedValue="NewEntry.PartnerName" TItem="string" TValue="string">
 						@foreach (var partner in PartnerList)
 						{
-							<Option Value="@partner">@partner</Option>
+							<SelectItem Value="@partner" TValue="string">
+								@partner
+							</SelectItem>
+							@* <Option Value="@partner">@partner</Option> *@
 						}
 					</Select>
+					<p>Selected PartnerName: @EditingEntry.PartnerName</p>
 				</div>
 				<div>
 					<label>Gestion:</label>
-					<Select @bind-Text="NewEntry.GestionName" TItem="string" TValue="string">
+					<Select @bind-SelectedValue="NewEntry.GestionName" TItem="string" TValue="string">
 						@foreach (var gestion in GestionList)
 						{
-							<Option Value="@gestion">@gestion</Option>
+
+							<SelectItem Value="@gestion" TValue="string">
+								@gestion
+							</SelectItem>
+							@* <Option Value="@gestion">@gestion</Option> *@
 						}
 					</Select>
+					<p>Selected GestionName: @EditingEntry.GestionName</p>
 				</div>
 				<Field>
 					<FieldLabel>@L["Date"]</FieldLabel>
@@ -110,25 +119,36 @@
 			</ModalHeader>
 			<ModalBody>
 				<Field>
-                    <div>
+					<div>
 						<label>Partner:</label>
-						<Select @bind-Text="EditingEntry.PartnerName" TItem="string" TValue="string">
+						<Select @bind-SelectedValue="EditingEntry.PartnerName" TItem="string" TValue="string">
 							@foreach (var partner in PartnerList)
 							{
-								<Option Value="@partner">@partner</Option>
+								@* <Option Value="@partner">@partner</Option> *@
+								<SelectItem Value="@partner" TValue="string">
+									@partner
+								</SelectItem>
 							}
 						</Select>
+						<p>Selected PartnerName: @EditingEntry.PartnerName</p>
+
 					</div>
 					<div>
 						<label>Gestion:</label>
-						<Select @bind-Text="EditingEntry.GestionName" TItem="string" TValue="string">
+						<Select @bind-SelectedValue="EditingEntry.GestionName" TItem="string" TValue="string">
 							@foreach (var gestion in GestionList)
 							{
-								<Option Value="@gestion">@gestion</Option>
+								<SelectItem Value="@gestion" TValue="string">
+									@gestion
+								</SelectItem>
+								@* <Option Value="@gestion">@gestion</Option> *@
 							}
 						</Select>
-                    </div>
+						<p>Selected GestionName: @EditingEntry.GestionName</p>
+
+					</div>
 				</Field>
+
 				<Field>
                     <FieldLabel>@L["Date"]</FieldLabel>
                     <DateEdit @bind-Date="@EditingEntry.Date" DefaultDate="@DateTime.Now"/>

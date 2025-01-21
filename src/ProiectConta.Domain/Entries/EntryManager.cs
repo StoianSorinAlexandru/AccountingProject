@@ -27,6 +27,15 @@ namespace ProiectConta.Entries
             );
         }
 
+        public async Task<Entry> CreateUnrelatedAsync(
+            DateTime date)
+        {
+            return new Entry(
+                GuidGenerator.Create(),
+                date
+                );
+        }
+
         public async Task ChangeDateAsync(Entry entry, DateTime date)
         {
             entry.Date = date;

@@ -5,7 +5,9 @@ using ProiectConta.Partners;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
@@ -42,15 +44,18 @@ namespace ProiectConta.Entries
         public async Task<EntryDto> CreateAsync(CreateUpdateEntryDto input)
         {
 
+            var entry = await _entryManager.CreateUnrelatedAsync(
+                input.Date
+            );
+
             var partner = await _partnerRepository.FindByNameAsync(input.PartnerName);
             var gestion = await _gestionRepository.FindByNameAsync(input.GestionName);
 
-            var entry = await _entryManager.CreateAsync(
-                input.Date,
-                partner.Id,
-                gestion.Id
-            );
-            await _entryRepository.InsertAsync(entry, autoSave: true);
+            entry.PartnerId = partner.Id;
+            entry.GestionId = gestion.Id;
+            await _entryRepository.InsertAsync(entry);
+
+
             return ObjectMapper.Map<Entry, EntryDto>(entry);
         }
 

@@ -31,5 +31,13 @@ namespace ProiectConta.Entries
             PartnerId = partnerId;
             GestionId = gestionId;
         }
+
+        internal Entry(
+            Guid id,
+            DateTime date)
+        {
+            Id = id;
+            Date = date;
+        }
     }
 }

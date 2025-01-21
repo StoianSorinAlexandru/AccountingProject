@@ -85,6 +85,9 @@ public partial class Entries
     private void OpenCreateEntryModal()
     {
         NewEntry = new CreateUpdateEntryDto();
+        NewEntry.Date = DateTime.Now;
+        NewEntry.PartnerName = PartnerList.First();
+        NewEntry.GestionName = GestionList.First();
         CreateEntryModal.Show();
     }
 
