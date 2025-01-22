@@ -28,6 +28,7 @@ namespace ProiectConta
         private readonly EntryManager _entryManager;
         private readonly ExitManager _exitManager;
         private readonly DetailedEntryManager _detailedEntryManager;
+        private readonly DetailedExitManager _detailedExitManager;
 
         public ProiectContaSeedContributor(
             IRepository<Gestion, Guid> gestionRepository,
@@ -42,7 +43,8 @@ namespace ProiectConta
             GestionManager gestionManager,
             EntryManager entryManager,
             ExitManager exitManager,
-            DetailedEntryManager detailedEntryManager
+            DetailedEntryManager detailedEntryManager,
+            DetailedExitManager detailedExitManager
         )
         {
             _gestionRepository = gestionRepository;
@@ -58,6 +60,7 @@ namespace ProiectConta
             _entryManager = entryManager;
             _exitManager = exitManager;
             _detailedEntryManager = detailedEntryManager;
+            _detailedExitManager = detailedExitManager;
         }
 
         public async Task SeedAsync(DataSeedContext context)
@@ -225,23 +228,31 @@ namespace ProiectConta
 
 
             // Seed Detailed Exits
-            //if (await _detailedExitRepository.GetCountAsync() <= 0)
-            //{
-            //    var exitA = await _exitRepository.FirstOrDefaultAsync(e => e.Date == DateTime.Parse("2023-03-01"));
-            //    var exitB = await _exitRepository.FirstOrDefaultAsync(e => e.Date == DateTime.Parse("2023-04-01"));
-            //    var productA = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product A");
-            //    var productC = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product C");
+            if (await _detailedExitRepository.GetCountAsync() <= 0)
+            {
+                var exitA = await _exitRepository.FirstOrDefaultAsync(e => e.Date == DateTime.Parse("2023-03-01"));
+                var exitB = await _exitRepository.FirstOrDefaultAsync(e => e.Date == DateTime.Parse("2023-04-01"));
+                var productA = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product A");
+                var productC = await _productRepository.FirstOrDefaultAsync(p => p.Name == "Product C");
 
-            //    await _detailedExitRepository.InsertAsync(
-            //        new DetailedExit { ExitId = exitA.Id, ProductId = productA.Id, Quantity = 10 },
-            //        autoSave: true
-            //    );
+                //await _detailedExitRepository.InsertAsync(
+                //    new DetailedExit { ExitId = exitA.Id, ProductId = productA.Id, Quantity = 10 },
+                //    autoSave: true
+                //);
 
-            //    await _detailedExitRepository.InsertAsync(
-            //        new DetailedExit { ExitId = exitB.Id, ProductId = productC.Id, Quantity = 4 },
-            //        autoSave: true
-            //    );
-            //}
+                //await _detailedExitRepository.InsertAsync(
+                //    new DetailedExit { ExitId = exitB.Id, ProductId = productC.Id, Quantity = 4 },
+                //    autoSave: true
+                //);
+                await _detailedExitRepository.InsertAsync(
+                    await _detailedExitManager.CreateAsync(exitA.Id, productA.Id, 10, productA.Price * 10 ?? 0),
+                    autoSave: true
+                );
+                await _detailedExitRepository.InsertAsync(
+                    await _detailedExitManager.CreateAsync(exitB.Id, productC.Id, 4, productC.Price * 4 ?? 0),
+                    autoSave: true
+                );
+            }
         }
     }
 }

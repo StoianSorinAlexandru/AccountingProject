@@ -434,6 +434,27 @@ namespace ProiectConta.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppDetailedExits",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ExitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppDetailedExits", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppEntries",
                 columns: table => new
                 {
@@ -864,41 +885,6 @@ namespace ProiectConta.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppDetailedExits",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<float>(type: "real", nullable: false),
-                    Price = table.Column<float>(type: "real", nullable: false),
-                    ExitId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    DeleterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    DeletionTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AppDetailedExits", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AppDetailedExits_AppExits_ExitId",
-                        column: x => x.ExitId,
-                        principalTable: "AppExits",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AppDetailedExits_AppProducts_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "AppProducts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "OpenIddictAuthorizations",
                 columns: table => new
                 {
@@ -1199,16 +1185,6 @@ namespace ProiectConta.Migrations
                 column: "UserName");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppDetailedExits_ExitId",
-                table: "AppDetailedExits",
-                column: "ExitId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppDetailedExits_ProductId",
-                table: "AppDetailedExits",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AppProducts_Name",
                 table: "AppProducts",
                 column: "Name");
@@ -1329,10 +1305,16 @@ namespace ProiectConta.Migrations
                 name: "AppEntries");
 
             migrationBuilder.DropTable(
+                name: "AppExits");
+
+            migrationBuilder.DropTable(
                 name: "AppGestions");
 
             migrationBuilder.DropTable(
                 name: "AppPartners");
+
+            migrationBuilder.DropTable(
+                name: "AppProducts");
 
             migrationBuilder.DropTable(
                 name: "AppReports");
@@ -1357,12 +1339,6 @@ namespace ProiectConta.Migrations
 
             migrationBuilder.DropTable(
                 name: "AbpUsers");
-
-            migrationBuilder.DropTable(
-                name: "AppExits");
-
-            migrationBuilder.DropTable(
-                name: "AppProducts");
 
             migrationBuilder.DropTable(
                 name: "OpenIddictAuthorizations");

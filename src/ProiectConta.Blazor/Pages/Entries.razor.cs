@@ -1,5 +1,6 @@
 ﻿using Blazorise;
 using Blazorise.DataGrid;
+using ProiectConta.DetailedEntries;
 using ProiectConta.Entries;
 using ProiectConta.Gestions;
 using ProiectConta.Partners;
@@ -17,17 +18,25 @@ public partial class Entries
     private IReadOnlyList<string> PartnerList { get; set; }
     private IReadOnlyList<string> GestionList { get; set; }
 
+    private IReadOnlyList<string> ProductList { get; set; }
+
     private int PageSize { get; } = LimitedResultRequestDto.DefaultMaxResultCount;
     private int CurrentPage { get; set; }
     private string CurrentSorting { get; set; }
     private int TotalCount { get; set; }
 
     private CreateUpdateEntryDto NewEntry { get; set; }
+    private CreateUpdateDetailedEntryDto NewDetailedEntry { get; set; }
     private Guid EditingEntryId { get; set; }
+    private Guid EditingDetailedEntryId { get; set; }
     private CreateUpdateEntryDto EditingEntry { get; set; }
+    private CreateUpdateDetailedEntryDto EditingDetailedEntry { get; set; }
+    private EntryDto SelectedEntry { get; set; }
+    private DetailedEntryDto DetailedEntry { get; set; }
 
     private Modal CreateEntryModal { get; set; }
     private Modal EditEntryModal { get; set; }
+    private Modal ViewDetailsModal { get; set; }
 
     public Entries()
     {
@@ -39,9 +48,13 @@ public partial class Entries
     {
         PartnerList = new List<string>();
         GestionList = new List<string>();
+        ProductList = new List<string>();
+        NewDetailedEntry = new CreateUpdateDetailedEntryDto();
+        EditingDetailedEntry = new CreateUpdateDetailedEntryDto();
         await GetEntriesAsync();
         await GetPartnersAsync();
         await GetGestionsAsync();
+        await GetProductsAsync();
     }
 
     private async Task GetEntriesAsync()
@@ -61,15 +74,19 @@ public partial class Entries
     private async Task GetPartnersAsync()
     {
         var result = await PartnerAppService.GetAllAsync();
-
         PartnerList = result.Select(p => p.Name).ToList();
     }
 
     private async Task GetGestionsAsync()
     {
         var result = await GestionAppService.GetAllAsync();
-
         GestionList = result.Select(g => g.Name).ToList();
+    }
+
+    private async Task GetProductsAsync()
+    {
+        var result = await ProductAppService.GetAllAsync();
+        ProductList = result.Select(product => product.Name).ToList();
     }
 
     private async Task InDataGridReadAsync(DataGridReadDataEventArgs<EntryDto> e)
@@ -88,6 +105,11 @@ public partial class Entries
         NewEntry.Date = DateTime.Now;
         NewEntry.PartnerName = PartnerList.First();
         NewEntry.GestionName = GestionList.First();
+
+        NewDetailedEntry = new CreateUpdateDetailedEntryDto();
+        NewDetailedEntry.ProductName = ProductList.First();
+        NewDetailedEntry.Quantity = 1;
+
         CreateEntryModal.Show();
     }
 
@@ -96,24 +118,43 @@ public partial class Entries
         CreateEntryModal.Hide();
     }
 
-    private void OpenEditEntryModal(EntryDto entry)
+    private async void OpenEditEntryModal(EntryDto entry)
     {
         EditingEntryId = entry.Id;
         EditingEntry = ObjectMapper.Map<EntryDto, CreateUpdateEntryDto>(EntryList.First(e => e.Id == entry.Id));
+
+        EditingDetailedEntryId = entry.Id;
+        var detailedEntry = await DetailedEntryAppService.FindByEntryId(entry.Id);
+        EditingDetailedEntry = ObjectMapper.Map<DetailedEntryDto, CreateUpdateDetailedEntryDto>(detailedEntry);
+
         EditEntryModal.Show();
     }
+
 
     private void CloseEditEntryModal()
     {
         EditEntryModal.Hide();
     }
+    private void OpenViewDetailsModal(EntryDto entry)
+    {
+        DetailedEntry = DetailedEntryAppService.FindByEntryId(entry.Id).Result;
+        SelectedEntry = entry;
+        ViewDetailsModal.Show();
+    }
+
+    private void CloseViewDetailsModal()
+    {
+        ViewDetailsModal.Hide();
+    }
 
     private async Task CreateEntryAsync()
     {
-        await EntryAppService.CreateAsync(NewEntry);
+        var createdEntry = await EntryAppService.CreateAsync(NewEntry);
+        NewDetailedEntry.EntryId = createdEntry.Id;
+        await DetailedEntryAppService.CreateAsync(NewDetailedEntry);
         NewEntry = new CreateUpdateEntryDto();
         await GetEntriesAsync();
-        CreateEntryModal.Hide();
+        await CreateEntryModal.Hide();
     }
 
     private async Task UpdateEntryAsync()
@@ -121,7 +162,7 @@ public partial class Entries
         await EntryAppService.UpdateAsync(EditingEntryId, EditingEntry);
         EditingEntry = new CreateUpdateEntryDto();
         await GetEntriesAsync();
-        EditEntryModal.Hide();
+        await EditEntryModal.Hide();
     }
 
     private async Task DeleteEntryAsync(EntryDto entry)

@@ -3,11 +3,15 @@
 @using ProiectConta.Gestions
 @using ProiectConta.Localization
 @using ProiectConta.Partners
+@using ProiectConta.Products
+@using ProiectConta.DetailedEntries
 @using Volo.Abp.AspNetCore.Components.Web
 @inherits ProiectContaComponentBase
 @inject IEntryAppService EntryAppService
 @inject IGestionAppService GestionAppService
 @inject IPartnerAppService PartnerAppService
+@inject IProductAppService ProductAppService
+@inject IDetailedEntryAppService DetailedEntryAppService
 @inject AbpBlazorMessageLocalizerHelper<ProiectContaResource> LH
 
 <Card>
@@ -47,6 +51,9 @@
 								<DropdownItem Clicked="() => DeleteEntryAsync(context)">
 									@L["Delete"]
 								</DropdownItem>
+								<DropdownItem Clicked="() => OpenViewDetailsModal(context)">
+									@L["Select"]
+								</DropdownItem>
 							</DropdownMenu>
 						</Dropdown>
 					</DisplayTemplate>
@@ -77,24 +84,34 @@
 							<SelectItem Value="@partner" TValue="string">
 								@partner
 							</SelectItem>
-							@* <Option Value="@partner">@partner</Option> *@
 						}
 					</Select>
-					<p>Selected PartnerName: @EditingEntry.PartnerName</p>
+					<p>Selected PartnerName: @NewEntry.PartnerName</p>
 				</div>
 				<div>
 					<label>Gestion:</label>
-					<Select @bind-SelectedValue="NewEntry.GestionName" TItem="string" TValue="string">
+					<Select @bind-SelectedValue="NewEntry.GestionName" TValue="string">
 						@foreach (var gestion in GestionList)
 						{
 
 							<SelectItem Value="@gestion" TValue="string">
 								@gestion
 							</SelectItem>
-							@* <Option Value="@gestion">@gestion</Option> *@
 						}
 					</Select>
-					<p>Selected GestionName: @EditingEntry.GestionName</p>
+					<p>Selected GestionName: @NewEntry.GestionName</p>
+				</div>
+				<div>
+					<label>Product:</label>
+					<Select @bind-SelectedValue="NewDetailedEntry.ProductName" TItem="string" TValue="string">
+						@foreach (var product in ProductList)
+						{
+							<SelectItem Value="@product" TValue="string">
+								@product
+							</SelectItem>
+						}
+					</Select>
+					<p>Selected GestionName: @NewDetailedEntry.ProductName</p>
 				</div>
 				<Field>
 					<FieldLabel>@L["Date"]</FieldLabel>
@@ -124,7 +141,6 @@
 						<Select @bind-SelectedValue="EditingEntry.PartnerName" TItem="string" TValue="string">
 							@foreach (var partner in PartnerList)
 							{
-								@* <Option Value="@partner">@partner</Option> *@
 								<SelectItem Value="@partner" TValue="string">
 									@partner
 								</SelectItem>
@@ -141,12 +157,23 @@
 								<SelectItem Value="@gestion" TValue="string">
 									@gestion
 								</SelectItem>
-								@* <Option Value="@gestion">@gestion</Option> *@
 							}
 						</Select>
 						<p>Selected GestionName: @EditingEntry.GestionName</p>
 
 					</div>
+                    <div>
+                        <label>Product:</label>
+                        <Select @bind-SelectedValue="EditingDetailedEntry.ProductName" TItem="string" TValue="string">
+                            @foreach (var product in ProductList)
+                            {
+                                <SelectItem Value="@product" TValue="string">
+                                    @product
+                                </SelectItem>
+                            }
+                        </Select>
+                        <p>Selected GestionName: @EditingEntry.GestionName</p>
+                    </div>
 				</Field>
 
 				<Field>
@@ -161,4 +188,62 @@
 			</ModalFooter>
 		</Form>
 	</ModalContent>
+</Modal>
+
+<Modal @ref="ViewDetailsModal">
+
+	<ModalContent IsCentered="true">
+		<Form>
+			<ModalHeader>
+				<ModalTitle>@L["Details"]</ModalTitle>
+				<CloseButton Clicked="CloseViewDetailsModal" />
+			</ModalHeader>
+				
+			<ModalBody>
+				@* <Row> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		<h3>@L["Details"]</h3> *@
+				@* 	</Column> *@
+				@* </Row> *@
+				@* <Row> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		<h4>@L["PartnerName"]</h4> *@
+				@* 	</Column> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		<h4>@L["GestionName"]</h4> *@
+				@* 	</Column> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		<h4>@L["ProductName"]</h4> *@
+				@* 	</Column> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		<h4>@L["Quantity"]</h4> *@
+				@* 	</Column> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		<h4>@L["Value"]</h4> *@
+				@* 	</Column> *@
+				@* </Row> *@
+				@* <Row> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		@* <p>@SelectedEntry.PartnerName</p> *@ 
+				@* 	</Column> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		@* <p>@SelectedEntry.GestionName</p> *@ 
+				@* 	</Column> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		@* <p>@DetailedEntry.ProductName</p> *@ 
+				@* 	</Column> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		@* <p>@DetailedEntry.Quantity</p> *@ 
+				@* 	</Column> *@
+				@* 	<Column ColumnSize="ColumnSize.IsAuto"> *@
+				@* 		@* <p>@DetailedEntry.Value</p> *@ 
+				@* 	</Column> *@
+				@* </Row> *@
+			</ModalBody>
+			<ModalFooter>
+				<Button Color="Color.Secondary" Clicked="CloseViewDetailsModal">@L["Close"]</Button>
+			</ModalFooter>
+		</Form>
+	</ModalContent>
+
 </Modal>

@@ -32,5 +32,12 @@ namespace ProiectConta.Exits
             GestionId = gestionId;
         }
 
+        internal Exit(
+            Guid id,
+            DateTime date) : base(id)
+        {
+            Date = date;
+        }
+
     }
 }

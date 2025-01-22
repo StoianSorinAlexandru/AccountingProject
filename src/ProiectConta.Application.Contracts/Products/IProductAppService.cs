@@ -8,6 +8,7 @@ namespace ProiectConta.Products
     public interface IProductAppService
     {
         Task<ProductDto> GetAsync(Guid id);
+        Task<List<ProductDto>> GetAllAsync();
         Task<PagedResultDto<ProductDto>> GetListAsync(GetProductListDto input);
         Task<ProductDto> CreateAsync(CreateUpdateProductDto input);
         Task UpdateAsync(Guid id, CreateUpdateProductDto input);

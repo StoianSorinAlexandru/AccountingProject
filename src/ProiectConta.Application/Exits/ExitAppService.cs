@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ProiectConta.DetailedEntries;
+using ProiectConta.Gestions;
+using ProiectConta.Partners;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,12 +13,23 @@ namespace ProiectConta.Exits
 {
     public class ExitAppService : ApplicationService, IExitAppService
     {
-        private readonly IExitRepository _exitRepository;
+        private readonly IExitRepository _exitRepository; 
+        private readonly IPartnerRepository _partnerRepository;
+        private readonly IGestionRepository _gestionRepository;
+        private readonly IDetailedEntryRepository _detailedEntryRepository;
         private readonly ExitManager _exitManager;
 
-        public ExitAppService(IExitRepository exitRepository, ExitManager exitManager)
+        public ExitAppService(
+            IExitRepository exitRepository,
+            IPartnerRepository partnerRepository,
+            IGestionRepository gestionRepository,
+            IDetailedEntryRepository detailedEntryRepository,
+            ExitManager exitManager)
         {
             _exitRepository = exitRepository;
+            _partnerRepository = partnerRepository;
+            _gestionRepository = gestionRepository;
+            _detailedEntryRepository = detailedEntryRepository;
             _exitManager = exitManager;
         }
 
@@ -27,17 +41,17 @@ namespace ProiectConta.Exits
 
         public async Task<ExitDto> CreateAsync(CreateUpdateExitDto input)
         {
-            var exit = await _exitManager.CreateAsync(
-                input.Date,
-                input.PartnerId,
-                input.GestionId
+            var exit = await _exitManager.CreateUnrelatedAsync(
+                input.Date
             );
-            using(var transaction = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
-            {
-                await _exitRepository.InsertAsync(exit, autoSave: true);
-                transaction.Complete();
-            }
-            await _exitRepository.InsertAsync(exit, autoSave: true);
+
+            var partner = await _partnerRepository.FindByNameAsync(input.PartnerName);
+            var gestion = await _gestionRepository.FindByNameAsync(input.GestionName);
+
+            exit.PartnerId = partner.Id;
+            exit.GestionId = gestion.Id;
+            await _exitRepository.InsertAsync(exit);
+
             return ObjectMapper.Map<Exit, ExitDto>(exit);
         }
 
@@ -48,8 +62,10 @@ namespace ProiectConta.Exits
             {
                 await _exitManager.ChangeDateAsync(exit, input.Date);
             }
-            exit.PartnerId = input.PartnerId;
-            exit.GestionId = input.GestionId;
+            var partner = await _partnerRepository.FindByNameAsync(input.PartnerName);
+            var gestion = await _gestionRepository.FindByNameAsync(input.GestionName);
+            exit.PartnerId = partner.Id;
+            exit.GestionId = gestion.Id;
             await _exitRepository.UpdateAsync(exit);
         }
 
@@ -68,17 +84,23 @@ namespace ProiectConta.Exits
             );
             var totalCount = await _exitRepository.GetCountAsync();
 
-            var exitDtoList = exits.Select(exit => new ExitDto
+            var exitDtoList = new List<ExitDto>();
+            foreach (var exit in exits)
             {
-                Id = exit.Id,
-                Date = exit.Date,
-                PartnerId = exit.PartnerId,
-                GestionId = exit.GestionId
-            }).ToList();
+                var partner = await _partnerRepository.GetAsync(exit.PartnerId);
+                var gestion = await _gestionRepository.GetAsync(exit.GestionId);
+                exitDtoList.Add(new ExitDto
+                {
+                    Id = exit.Id,
+                    Date = exit.Date,
+                    PartnerName = partner.Name,
+                    GestionName = gestion.Name
+                });
+            }
 
             return new PagedResultDto<ExitDto>(
                 totalCount,
-                exitDtoList
+                exitDtoList.AsReadOnly()
             );
         }
 

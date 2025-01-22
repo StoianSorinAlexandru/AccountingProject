@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ProiectConta.Application.Contracts\ProiectConta.Application.Contracts.csproj" />
     <ProjectReference Include="..\ProiectConta.Application\ProiectConta.Application.csproj" />
     <ProjectReference Include="..\ProiectConta.HttpApi\ProiectConta.HttpApi.csproj" />
     <ProjectReference Include="..\ProiectConta.EntityFrameworkCore\ProiectConta.EntityFrameworkCore.csproj" />

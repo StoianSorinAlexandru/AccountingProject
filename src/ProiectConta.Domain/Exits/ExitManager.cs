@@ -29,6 +29,15 @@ namespace ProiectConta.Exits
             );
         }
 
+        public async Task<Exit> CreateUnrelatedAsync(
+            DateTime date)
+        {
+            return new Exit(
+                GuidGenerator.Create(),
+                date
+                );
+        }
+
         public async Task ChangeDateAsync(Exit exit, DateTime date)
         {
             exit.Date = date;

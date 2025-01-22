@@ -12,14 +12,27 @@ namespace ProiectConta.DetailedExits
 {
     public class DetailedExit : FullAuditedEntity<Guid>
     {
-        public DateTime Date { get; set; }
-        public Guid ProductId { get; set; }
-        [ForeignKey("ProductId")]
-        public virtual Product Product { get; set; }
-        public float Quantity { get; set; }
-        public float Price { get; set; }
         public Guid ExitId { get; set; }
-        [ForeignKey("ExitId")]
-        public virtual Exit Exit { get; set; }
+        public Guid ProductId { get; set; }
+        public int Quantity { get; set; }
+        public float Value;
+
+        private DetailedExit()
+        {
+        }
+
+        internal DetailedExit(
+            Guid id,
+            Guid exitId,
+            Guid productId,
+            int quantity,
+            float value)
+        {
+            Id = id;
+            ExitId = exitId;
+            ProductId = productId;
+            Quantity = quantity;
+            Value = value;
+        }
     }
 }

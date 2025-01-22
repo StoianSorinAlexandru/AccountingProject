@@ -7,9 +7,9 @@ using Volo.Abp;
 
 namespace ProiectConta.Entries
 {
-    public class EntryAlreadyExists : BusinessException
+    public class EntryAlreadyExistsException : BusinessException
     {
-        public EntryAlreadyExists(DateTime date) : base(ProiectContaDomainErrorCodes.EntryAlreadyExists)
+        public EntryAlreadyExistsException(DateTime date) : base(ProiectContaDomainErrorCodes.EntryAlreadyExists)
         {
             WithData("date", date);
         }

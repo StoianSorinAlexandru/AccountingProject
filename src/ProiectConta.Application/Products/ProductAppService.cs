@@ -29,6 +29,12 @@ namespace ProiectConta.Products
             return ObjectMapper.Map<Product, ProductDto>(product);
         }
 
+        public async Task<List<ProductDto>> GetAllAsync()
+        {
+            var products = await _productRepository.GetListAsync();
+            return ObjectMapper.Map<List<Product>, List<ProductDto>>(products);
+        }
+
         public async Task<ProductDto> GetProductAsync(string name)
         {
             var product = await _productRepository.FindByNameAsync(name);
